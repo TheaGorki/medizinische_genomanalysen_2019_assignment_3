@@ -2,8 +2,9 @@
 
 import vcf
 import httplib2
+import json
 
-__author__ = 'XXX'
+__author__ = 'Anna-Dorothea Gorki'
 
 
 ##
@@ -20,12 +21,12 @@ __author__ = 'XXX'
 
 class Assignment3:
     
-    def __init__(self):
+    def __init__(self, file):
         ## Check if pyvcf is installed
         print("PyVCF version: %s" % vcf.VERSION)
         
         ## Call annotate_vcf_file here
-        self.vcf_path = ""  # TODO
+        self.vcf_path = file
 
     def annotate_vcf_file(self):
         '''
@@ -34,12 +35,7 @@ class Assignment3:
         - Store the result in a data structure
         :return:
         '''    
-        print("TODO")
-                
-        ##
-        ## Example loop
-        ##
-        
+
         ## Build the connection
         h = httplib2.Http()
         headers = {'content-type': 'application/x-www-form-urlencoded'}
@@ -61,12 +57,8 @@ class Assignment3:
         annotation_result = con.decode('utf-8')
         
         ## TODO now do something with the 'annotation_result'
-        
-        ##
-        ## End example code
-        ##
-        
-        return None  ## return the data structure here
+        res_annotation= json.loads(annotation_result)
+        return res_annotation
     
     
     def get_list_of_genes(self):
@@ -114,12 +106,19 @@ class Assignment3:
     
     def print_summary(self):
         self.annotate_vcf_file()
-        print("Print all results here")
+        print("Print all results here:")
+        self.get_list_of_genes()
+        self.get_num_variants_modifier()
+        self.get_num_variants_with_mutationtaster_annotation()
+        self.get_num_variants_non_synonymous()
+        self.view_vcf_in_browser()
+
+
     
     
 def main():
     print("Assignment 3")
-    assignment3 = Assignment3()
+    assignment3 = Assignment3("chr16.vcf")
     assignment3.print_summary()
     print("Done with assignment 3")
         
