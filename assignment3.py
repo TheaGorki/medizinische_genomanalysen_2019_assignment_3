@@ -75,6 +75,7 @@ class Assignment3:
             else:
                 res_genes.append(res_annotation[i])
 
+
         key_genes= {k for d in res_genes for k in d.keys()}
         #print(key_genes)
         gene_names=[]
@@ -96,28 +97,48 @@ class Assignment3:
         gene_names = list(set(gene_names))
         print("The names of the genes found are: %s" % gene_names)
 
-    def get_num_variants_modifier(self):
+        return res_genes
+
+    def get_num_variants_modifier(self, res_annotation):
         '''
         Print the number of variants with putative_impact "MODIFIER"
         :return:
         '''
-        print("TODO")
+        count=0
+        for i in res_annotation:
+            if 'snpeff' in i:
+                if 'putative_impact' in i['snpeff']['ann']:
+                    if i['snpeff']['ann']['putative_impact'] == 'MODIFIER':
+                        count= count +1
+
+        print("The number of variants with putative_impact MODIFIER is: %s" % count)
         
     
-    def get_num_variants_with_mutationtaster_annotation(self):
+    def get_num_variants_with_mutationtaster_annotation(self, res_annotation):
         '''
         Print the number of variants with a 'mutationtaster' annotation
         :return:
         '''
-        print("TODO")
+        count=0
+        for i in res_annotation:
+            if 'dbnsfp' in i:
+                if 'mutationtaster' in i['dbnsfp']:
+                    count= count+1
+        print("The number of variants with a 'mutationtaster' annotation is: %s" % count)
         
     
-    def get_num_variants_non_synonymous(self):
+    def get_num_variants_non_synonymous(self, res_annotation):
         '''
         Print the number of variants with 'consequence' 'NON_SYNONYMOUS'
         :return:
         '''
-        print("TODO")
+        count=0
+        for i in res_annotation:
+            if 'cadd' in i:
+                if 'consequence' in i['cadd']:
+                    if i['cadd']['consequence'] == 'NON_SYNONYMOUS':
+                        count= count +1
+        print("The number of variants with 'consequence' 'NON_SYNONYMOUS' is: %s" % count)
         
     
     def view_vcf_in_browser(self):
@@ -128,16 +149,21 @@ class Assignment3:
         '''
    
         ## Document the final URL here
-        print("TODO")
+        url= "https://vcf.iobio.io/?species=Human&build=GRCh38"
+        print("The final URL is: %s" %url)
+        print("Need to upload .gz and gz.tbi of your file")
+
+        #create .gz and gz.tbi via command line: bgzip -c file.vcf > file.vcf.gz
+        #tabix -p vcf file.vcf.gz
             
     
     def print_summary(self):
         res_annotation=self.annotate_vcf_file()
         print("Print all results here:")
         self.get_list_of_genes(res_annotation)
-        self.get_num_variants_modifier()
-        self.get_num_variants_with_mutationtaster_annotation()
-        self.get_num_variants_non_synonymous()
+        self.get_num_variants_modifier(res_annotation)
+        self.get_num_variants_with_mutationtaster_annotation(res_annotation)
+        self.get_num_variants_non_synonymous(res_annotation)
         self.view_vcf_in_browser()
 
 
