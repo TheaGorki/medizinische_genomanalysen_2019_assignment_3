@@ -3,6 +3,7 @@
 import vcf
 import httplib2
 import json
+from pprint import pprint
 
 __author__ = 'Anna-Dorothea Gorki'
 
@@ -57,18 +58,44 @@ class Assignment3:
         annotation_result = con.decode('utf-8')
         
         ## TODO now do something with the 'annotation_result'
+        #pprint(annotation_result)
         res_annotation= json.loads(annotation_result)
         return res_annotation
     
     
-    def get_list_of_genes(self):
+    def get_list_of_genes(self, res_annotation):
         '''
         Print the name of genes in the annotation data set
         :return:
         '''
-        print("TODO")
-    
-    
+        res_genes=[]
+        for i in range(len(res_annotation)):
+            if res_annotation[i].get('notfound') == True:
+                continue
+            else:
+                res_genes.append(res_annotation[i])
+
+        key_genes= {k for d in res_genes for k in d.keys()}
+        #print(key_genes)
+        gene_names=[]
+        for i in res_genes:
+            if 'dbnsfp' in i:
+                if 'genename' in i['dbnsfp']:
+                    gene_names.append(i['dbnsfp']['genename'])
+            if 'cadd' in i:
+                if 'gene' in i['cadd']:
+                    for j in i['cadd']['gene']:
+                        if 'genename' in j:
+                            if isinstance(j, dict) == True:
+                                gene_names.append(j['genename'])
+            if 'snpeff' in i:
+                    for j in i['snpeff']['ann']:
+                            if isinstance(j, dict) == True:
+                                gene_names.append(j['genename'])
+
+        gene_names = list(set(gene_names))
+        print("The names of the genes found are: %s" % gene_names)
+
     def get_num_variants_modifier(self):
         '''
         Print the number of variants with putative_impact "MODIFIER"
@@ -105,9 +132,9 @@ class Assignment3:
             
     
     def print_summary(self):
-        self.annotate_vcf_file()
+        res_annotation=self.annotate_vcf_file()
         print("Print all results here:")
-        self.get_list_of_genes()
+        self.get_list_of_genes(res_annotation)
         self.get_num_variants_modifier()
         self.get_num_variants_with_mutationtaster_annotation()
         self.get_num_variants_non_synonymous()
